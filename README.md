@@ -19,23 +19,27 @@ In the era of prevalent digital shopping, if e-commerce platforms can intelligen
 Compared with traditional rating analysis that relies on average scores or rules, rating prediction models built based on machine learning and big data mining integrate multi-dimensional information, offering stronger interpretability and generalizability. These models can effectively support the platform's personalized services and refined operations.
 
 #### Research Question
-Can we predict whether a customer will give a positive or negative review using only structured data-such as product information, logistics data, and order features-before the review is actually written, by leveraging machine learning models?
+Can we rely solely on structured data (such as product information, logistics information, and order characteristics) and use machine learning models to predict whether users will give positive reviews (4-5 points) or negative reviews (1-3 points) before they submit their ratings?
 
 #### Data Sources
 This project utilizes the publicly available e-commerce dataset from the Brazilian platform Olist, which captures the complete customer journey from registration, order placement, and product browsing to order fulfillment and review submission. Based on this dataset, a predictive model for user ratings is developed.
 
 1. Dataset:
+
     There are 4 CSV files, containing 24 features such as time features, amount features, product features, and user behavior features, with a total of nearly 100,000 pieces of data
 
 2. Target variable
+
     Positive evaluation (rating 4-5), negative evaluation (rating 1-3)
 
 #### Methodolog
 1. Data preprocessing
+
     This includes data cleaning and filtering for each file, feature engineering, descriptive statistical analysis, etc., with abnormal data removed and issues such as data imbalance identified.
 
 2. Correlation analysis
-    To identify the important variables affecting review ratings, we used the **Mutual Information (MI)** method to evaluate the non-linear dependence between each feature and the target variable.
+
+    To identify the important variables affecting review ratings, we used the Mutual Information (MI) method to evaluate the non-linear dependence between each feature and the target variable.
 
     Finally, we selected the top 9 variables with the highest correlation, including delivery_time, shipping_time, and delivery_ratio, as the model inputs.
 
@@ -52,6 +56,7 @@ This project utilizes the publicly available e-commerce dataset from the Brazili
     - Use SMOTE oversampling to handle class imbalance.
 
 4. Model Evaluation
+
     To comprehensively evaluate the performance of different models in the user rating prediction task, we conducted a comprehensive comparative analysis from three dimensions: classification metrics (F1, Precision, Recall), ROC curve (AUC), and Precision-Recall curve (AP).
 
 #### Results
