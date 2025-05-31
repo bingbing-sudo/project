@@ -5,26 +5,18 @@ Jianing Song
 #### Abstract
 This study focuses on the prediction of user ratings in e-commerce platforms, aiming to determine whether a customer is likely to leave a positive review based on structured features from historical transactions. To support service optimization and timely intervention for merchants, we utilize the publicly available e-commerce dataset from Brazil's Olist platform, which encompasses multi-dimensional information on orders, products, logistics, and customer feedback.
 
-During the data preprocessing stage, to address the significant class imbalance in the review labels (with positive reviews accounting for over 70%) and enhance prediction accuracy, the review scores were transformed into a binary classification task. Feature importance was evaluated using **mutual information**, based on which the top nine most relevant predictors were selected. These key features include logistics timeliness, fulfillment ratios, and total order value, all of which exhibit strong associations with the final review outcomes.
+In the data processing stage, this paper performs binary classification labeling on the rating data. Through the **mutual information** method, it evaluates the feature importance of all variables and filters out nine key features most relevant to the rating results, including variables such as logistics timeliness, performance ratio, and order amount.
 
-In terms of model construction, this study explored mainstream classifiers such as *XGBoost* and *Random Forest*, and ultimately combined them into a **stacking ensemble model**, with *logistic regression* employed as the meta-learner to achieve nonlinear integration of multiple model outputs. Furthermore, to mitigate the class imbalance in review labels, a **SMOTE oversampling** strategy was introduced to balance the training data, and feature standardization was applied during the preprocessing stage to enhance model stability.
+In terms of model construction, this paper attempts mainstream classifiers such as XGBoost and random forest, and finally fuses them into a **stacked ensemble model**, using logistic regression as a meta-learner to achieve non-linear integration of multi-model results. Additionally, to further alleviate the imbalance of rating labels, we introduce a **SMOTE oversampling** strategy to balance the training data.
 
-In terms of model evaluation, we conducted a comparative analysis using multiple metrics, including **accuracy**, *precision*, *recall*, *F1-score*, *ROC curves*, and *precision-recall curves*. The results demonstrate that the constructed **stacking ensemble model** achieved the best performance on the test set, with an **accuracy** of 80.2%, a minority class F1-score of 0.588, and an average precision (AP) of 0.90 - significantly outperforming individual models such as *XGBoost* or *Logistic Regression*.
+In terms of model evaluation, we comprehensively used multiple classification metrics, as well as ROC curves, Precision-Recall curves, etc., for comparative analysis. The results show that the constructed Stacking ensemble model achieved the best performance on the test set, significantly outperforming single models.
 
 The model not only maintains high overall accuracy but also significantly enhances the ability to identify negative reviews (minority class samples), demonstrating the effectiveness and robustness of ensemble learning approaches in the context of e-commerce review prediction tasks.
 
 #### Rationale
-In today's increasingly digital shopping environment, users' experiences and satisfaction on e-commerce platforms are often reflected through rating systems. If the platform can intelligently predict user ratings for orders based on multi-dimensional data such as users' past behavior, product attributes, logistics information, and order and delivery times, it can generate value on multiple levels:
+In the era of prevalent digital shopping, if e-commerce platforms can intelligently predict order ratings based on multi-dimensional data such as user behavior, products, and logistics, they can achieve values including proactive intervention in negative review risks, optimization of product recommendations, assistance with merchant analysis, and enhancement of user satisfaction.
 
-    - Proactive intervention for negative review risks: the system can trigger customer support or retention incentives in advance for orders predicted to receive low ratings.
-
-    - Optimize product recommendation mechanisms: prioritize recommending products that users are more likely to rate highly.
-
-    - Support merchant operational analysis: identify key factors influencing user ratings, such as slow logistics or discrepancies between product descriptions and actual items.
-
-    - Enhance overall user satisfaction: achieve data-driven service improvement through a closed-loop system of prediction and optimization.
-
-Traditional rating analysis often relies on average scores or rule-based heuristics, which tend to overlook individual differences in user rating behavior and contextual dependencies. By leveraging machine learning and big data mining techniques, we can integrate order details, user profiles, product attributes, and temporal features to build a rating prediction model with greater interpretability and generalizability. This provides robust support for personalized services and refined operations on e-commerce platforms.
+Compared with traditional rating analysis that relies on average scores or rules, rating prediction models built based on machine learning and big data mining integrate multi-dimensional information, offering stronger interpretability and generalizability. These models can effectively support the platform's personalized services and refined operations.
 
 #### Research Question
 Can we predict whether a customer will give a positive or negative review using only structured data-such as product information, logistics data, and order features-before the review is actually written, by leveraging machine learning models?
@@ -33,40 +25,17 @@ Can we predict whether a customer will give a positive or negative review using 
 This project utilizes the publicly available e-commerce dataset from the Brazilian platform Olist, which captures the complete customer journey from registration, order placement, and product browsing to order fulfillment and review submission. Based on this dataset, a predictive model for user ratings is developed.
 
 1. Dataset:
-
-    A total of four CSV files are used in this project, described as follows:
-    - Order Items Table *(olist_order_items_dataset.csv)*: Lists the detailed items included in each order, including product ID, seller ID, price, and freight value. 
-    - Orders Table *(olist_orders_dataset.csv)*: Describes the lifecycle of orders from September 2016 to October 2018, including order placement time, shipping time, delivery time, and order status.
-    - Products Table *(olist_products_dataset.csv)*: Provides product attribute information such as category name, dimensions, and weight.
-    - Review Information Table *(olist_order_reviews_dataset.csv)*: Contains user ratings for orders (from 1 to 5 stars).
+    There are 4 CSV files, containing 24 features such as time features, amount features, product features, and user behavior features, with a total of nearly 100,000 pieces of data
 
 2. Target variable
     Positive evaluation (rating 4-5), negative evaluation (rating 1-3)
 
 #### Methodolog
 1. Data preprocessing
-    - Data Cleaning and Filtering
-        Remove abnormal monthly data with extremely low order volumes; delete abnormal records with negative time differences; retain data where the order status is "delivered" and delete undelivered orders.
-
-    - Missing Value Handling
-        For categorical variables, missing values are filled with the mode, while for numerical variables (such as size and weight), missing values are filled with the mean.
-
-    - Feature Engineering
-     Time features: Extract date features such as year, month, and day of the week from order data.
-
-     Order information features: Add three time difference features, including order approval duration, shipping duration, and delivery duration.
-
-    - Descriptive Statistical Analysis
-        Conduct descriptive statistics on the number of orders, the number of sellers, the number of products, prices, and freight costs.
-
-        Statistically analyze the distribution of user ratings to identify data imbalance issues.
+    This includes data cleaning and filtering for each file, feature engineering, descriptive statistical analysis, etc., with abnormal data removed and issues such as data imbalance identified.
 
 2. Correlation analysis
     To identify the important variables affecting review ratings, we used the **Mutual Information (MI)** method to evaluate the non-linear dependence between each feature and the target variable.
-
-    Among them, delivery_time has the highest score in the normalized mutual information. Variables directly related to delivery efficiency and performance ratio, such as shipping_time and delivery_ratio, also show high correlation. Variables reflecting price structure and cost-performance ratio, such as freight_ratio and price_per_weight, also demonstrate certain information value, indicating the impact of freight burden and product pricing on customer perception.
-
-    In contrast, variables related to product description dimensions such as product_photos_qty, product_height_cm, product_width_cm, and product_name_length have mutual information close to zero, indicating weak statistical correlation with rating outcomes. These fields are considered for exclusion.
 
     Finally, we selected the top 9 variables with the highest correlation, including delivery_time, shipping_time, and delivery_ratio, as the model inputs.
 
@@ -97,18 +66,18 @@ This project utilizes the publicly available e-commerce dataset from the Brazili
 - **Key Insights**:  
   - **Classification metrics** : The Stacking model achieves the optimal balance in F1, Recall, and Precision metrics, especially significantly leading in Recall-0 and F1-0, indicating its obvious advantages in minority class detection.
 
-  - **ROC & PR Curve**: In terms of the ROC curve, the AUC of the Stacking model is as high as 0.79, significantly outperforming other models. In the P-R curve evaluation, the Stacking model excels again, with an average precision (AP) of 0.90. It not only maintains a high recall rate but also ensures prediction accuracy at high recall levels, reflecting its stronger ability to identify negative reviews and lower misjudgment rate in practical business scenarios.
+  - **ROC & PR Curve**: In terms of the ROC curve, the Stacking model achieved an AUC of 0.79, significantly outperforming other models. In the P-R curve evaluation, the Stacking model performed excellently again, with an average precision (AP) of 0.90, maintaining a high recall rate while ensuring prediction accuracy at high recall levels.
 
-Based on the above evaluation results, the Stacking model demonstrates the best performance in terms of accuracy, robustness, and class balance handling. It effectively integrates the advantages of multiple base models (XGBoost, RandomForest, Logistic Regression) and can stably capture complex features and boundary samples in rating tendencies. Therefore, this study finally selects the Stacking model as the rating prediction model.
+Based on the above evaluation results, the Stacking model demonstrates the best performance in terms of accuracy, robustness, and class balance handling. Therefore, this study finally selects the Stacking model as the rating prediction model.
 
 #### Next steps
 Based on the findings of this study, the following directions can be explored to further improve and expand the model's performance and application value in subsequent research:
 
-- Incorporate more dynamic behavioral features, such as users' historical rating preferences and other user behavior data, to enhance the model's ability to capture personalized rating tendencies
+- Introduce more dynamic behavioral features to enhance the model's ability to capture personalized rating tendencies.
 
 - It is considered to introduce time-series features and special holiday markers (such as Christmas, etc.) to model the potential impact of temporal context on ratings
 
-- It is considered to link the rating prediction task with other platform modules (such as recommendation systems and after-sales systems) to achieve prediction-driven refined operations and service optimization, ultimately promoting the improvement of overall service quality and user stickiness.
+- It is considered to link the rating prediction task with other platform modules such as the recommendation system and after-sales system, so as to achieve prediction-driven refined operations and service optimization.
 
 - Product reviews can be introduced, and large language models can be used to perform sentiment analysis on the text, which can further accurately predict product ratings.
 
